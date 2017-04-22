@@ -1,20 +1,22 @@
 import { Sources, Sinks } from '@cycle/run';
 import { run } from '@cycle/most-run';
-import { crux } from './crux-main';
-import { makeDOMDriver, h } from '@cycle/dom';
-import { combineArray } from 'most';
+import { makeDOMDriver, h, VNode } from '@cycle/dom';
+import { combineArray, Stream, periodic, just } from 'most';
+import { makeSandboxDriver } from './sandbox';
 
-function Component (sources: Sources): Sinks {
-  const sinks = Array(4)
-    .fill(null)
-    .map(() => crux('./app.js', sources).DOM)
-  
+function Component ({Sandbox, ...sources}: Sources & {Sandbox: any} ): Sinks {
+  const vdom$ = 
+  periodic(3000)
+    .startWith(null)
+    .map(() => Sandbox.select('./widget.js', sources, ['DOM'], {}).DOM)
+    .switch();
   
   return {
-    DOM: combineArray((...children) => {
-      return h('div', {}, children);
-    }, sinks)
+    DOM: vdom$
   };
 };
 
-run(Component, { DOM : makeDOMDriver('#app')});
+run(Component, {
+  DOM : makeDOMDriver('#app'),
+  Sandbox: makeSandboxDriver()
+});

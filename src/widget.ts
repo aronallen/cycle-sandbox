@@ -1,11 +1,11 @@
 import { periodic } from 'most';
-import { run } from './crux-run';
+import { setup, sandboxDOMDriver } from './sandbox-worker';
 import { Sources, Sinks } from '@cycle/run';
+import { run } from '@cycle/most-run';
 
 const SIZE = 256;
 
 function line (offset, frequency) {
-  
   const radians = Math.PI * frequency / SIZE;
   return Array(SIZE)
     .fill(null)
@@ -15,7 +15,7 @@ function line (offset, frequency) {
 function Component (sources: Sources): Sinks {
   const multiply$ = sources.DOM
     .select('svg')
-    .events('click')
+    .events('mousedown')
     .map(() => 0).scan((acc, n) => acc + 1, 1)
     .tap(e => console.log(e));
   return {
@@ -23,26 +23,30 @@ function Component (sources: Sources): Sinks {
     .scan((acc, n) => acc + 1, 0)
     .combine(Array, multiply$)
     .map(([n, freq]) => ({
-      t: 'svg',
-      o: {
+      tag: 'svg',
+      options: {
         attrs : {
           width: SIZE,
           height: SIZE
         }
       },
-      c: [{
-        t: 'polyline',
-        o: {
+      children: [{
+        tag: 'polyline',
+        options: {
           attrs : {
             points: line(n, freq)
           }
         },
-        c: []
+        children: []
       }]
     }))
   };
 }
 
-run(Component, {
-  
-});
+setup(Component, {
+  // regular drivers such as @cycle/http
+}, {
+  // worker drivers 
+  // (return a function that returns a driver)
+  DOM: sandboxDOMDriver
+}, run);

@@ -7,7 +7,7 @@ module.exports = {
   devtool: 'eval',
   entry: {
     main: './src/main.ts',
-    app:  './src/app.ts'
+    widget:  './src/widget.ts'
   },
   module: {
     loaders: [{
