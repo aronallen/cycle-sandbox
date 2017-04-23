@@ -5,7 +5,7 @@ import { combineArray, Stream, periodic, just } from 'most';
 import { makeSandboxDriver } from './sandbox';
 
 function Component ({Sandbox, ...sources}: Sources & {Sandbox: any} ): Sinks {
-  const vdom$ = periodic(10000)
+  const vdom$ = periodic(1000)
     .startWith(null)
     .map(() => combineArray(
       (...children) => h('div', {}, children as Array<VNode>),

@@ -16,7 +16,7 @@ import isolate from '@cycle/isolate';
 
 import {
   DOMSource,
-  VNode as CycleVNode,
+  VNode,
   h
 } from '@cycle/dom';
 import { Stream } from 'xstream';
@@ -48,13 +48,6 @@ type MessagePorts = {
 type JSONValue = {
   [key: string]: boolean | number | string | Array<JSONValue> | JSONValue
 };
-
-
-export type VNode = {
-  tag: string,
-  options: JSONValue,
-  children: Array<VNode | string>
-}
 
 export enum WorkerDOMMessageCommand {
   vnode,
@@ -121,22 +114,6 @@ function synthesizeEvent(event: Event, listenerId: string): WorkerDOMEvent {
   }
 }
 
-function toSnabbdom(node: VNode | string): CycleVNode | string { 
-  if (typeof node === 'string') {
-    return node;
-  }
-  const children = node.children || [];
-  const mappedChildren = children.map(toSnabbdom);
-  // add sanitization of tag names and malicous attributes and values
-  // such as script src javascipt: pseuod protocol etc.
-  // should be very extensive!
-  return h(
-    node.tag, 
-    node.options,
-    mappedChildren
-  )
-}
-
 const unique = (n: any, i: number, a: Array<any>) => a.indexOf(n) === i;
 
 export const DOMBridge: Bridge = (rx, tx, source): FantasyObservable => {
@@ -155,13 +132,7 @@ export const DOMBridge: Bridge = (rx, tx, source): FantasyObservable => {
           next (message) {
             if (message.cmd === WorkerDOMMessageCommand.vnode) {
               const vnode = message.payload as VNode;
-              
-              try {
-                const snabbdomVNode = toSnabbdom(vnode);
-                observer.next(snabbdomVNode);
-              } catch ( error ) {
-                observer.error( error );
-              }
+              observer.next(vnode);
             } else if (message.cmd === WorkerDOMMessageCommand.attach) {
               const payload = message.payload as WorkerDOMAttachMessage;
               const options = payload.options || {};
