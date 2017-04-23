@@ -17,7 +17,7 @@ function Component (sources: Sources): Sinks {
   const multiply$ = sources.DOM
     .select('svg')
     .events('mousedown')
-    .map(() => 0).scan((acc, n) => acc + 1, 1)
+    .map(() => 0).scan((acc, n) => acc * 1.1, 1)
     .tap(e => console.log(e));
 
   const title$ = sources
