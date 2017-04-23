@@ -1,6 +1,6 @@
 # Cycle Sandbox
 
-Cycle Sandbox lets you run a component in a Web Worker
+Cycle Sandbox lets you run a component in a Web Worker.
 Cycle Sandbox is still WIP and not quite ready for prime time.
 Feed back is much appreciated.
 
