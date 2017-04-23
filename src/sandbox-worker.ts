@@ -63,15 +63,15 @@ export function setup (
       const start$ = fromEvent(self, 'message')
         .map((event: MessageEvent) => event.data as SandboxMessage)
         .filter(message => message.instanceId === instanceId && message.cmd === SandboxMessageCommand.start)
-        .mapTo(SandboxMessageCommand.start)
-        .debug('start')
+        .mapTo(SandboxMessageCommand.start);
+        
         
       
       const stop$ = fromEvent(self, 'message')
         .map((event: MessageEvent) => event.data as SandboxMessage)
         .filter(message => message.instanceId === instanceId && message.cmd === SandboxMessageCommand.stop)
-        .mapTo(SandboxMessageCommand.stop)
-        .debug('stop');
+        .mapTo(SandboxMessageCommand.stop);
+        
       
       start$
         .endWhen(stop$)
@@ -125,7 +125,8 @@ export const sandboxDOMDriver: WorkerDriver = (rx, tx) => {
 
       },
       complete () {
-
+        rx.close();
+        tx.close();
       }
     })
     

@@ -53,7 +53,7 @@ type JSONValue = {
 export type VNode = {
   tag: string,
   options: JSONValue,
-  children: Array<VNode>
+  children: Array<VNode | string>
 }
 
 export enum WorkerDOMMessageCommand {
@@ -121,7 +121,10 @@ function synthesizeEvent(event: Event, listenerId: string): WorkerDOMEvent {
   }
 }
 
-function toSnabbdom(node: VNode): CycleVNode { 
+function toSnabbdom(node: VNode | string): CycleVNode | string { 
+  if (typeof node === 'string') {
+    return node;
+  }
   const children = node.children || [];
   const mappedChildren = children.map(toSnabbdom);
   // add sanitization of tag names and malicous attributes and values
@@ -181,7 +184,7 @@ export const DOMBridge: Bridge = (rx, tx, source): FantasyObservable => {
 
                   },
                   complete() {
-
+                    console.log('complete');
                   }
                 })
             } else if (message.cmd === WorkerDOMMessageCommand.detach) {
@@ -202,6 +205,10 @@ export const DOMBridge: Bridge = (rx, tx, source): FantasyObservable => {
       rx.close();
       tx.close();
       listener.unsubscribe();
+      Object.keys(attachments).forEach((key) => {
+        attachments[key].unsubscribe();
+        delete attachments[key];
+      });
     }
   }))
 }
@@ -278,6 +285,7 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
       let channels: MessageChannels;
       let subscription: FantasySubscription;
       let worker: Worker;
+      let receivePorts: MessagePorts = {};
       const instanceId = uuid();
       return adapt(xs.create({
         start (observer) {
@@ -303,7 +311,7 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
           
           // listener method
           function listener (message: SandboxMessage) {
-            const receivePorts = message.ports;
+            receivePorts = message.ports;
 
             const sinks = [
               ...Object.keys(sendPorts), 
@@ -353,9 +361,12 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
             })
         },
         stop () {
-          Object.values(channels).forEach(channel => 
-            channel.port1.close()
-          )
+          Object.values(channels)
+            .forEach(channel => 
+              channel.port1.close()
+            )
+          Object.values(receivePorts)
+            .forEach(port => port.close());
           channels = null;
           worker.postMessage({
             instanceId,

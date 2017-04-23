@@ -5,12 +5,13 @@ import { combineArray, Stream, periodic, just } from 'most';
 import { makeSandboxDriver } from './sandbox';
 
 function Component ({Sandbox, ...sources}: Sources & {Sandbox: any} ): Sinks {
-  const vdom$ = 
-  periodic(3000)
+  const vdom$ = periodic(3000)
     .startWith(null)
-    .map(() => Sandbox.select('./widget.js', sources, ['DOM'], {}).DOM)
-    .switch();
-  
+    .map(() => combineArray(
+      (...children) => h('div', {}, children as Array<VNode>),
+      Array(4).fill(null).map(() => Sandbox.select('./widget.js', sources, ['DOM'], {}).DOM)))
+    .switch()
+
   return {
     DOM: vdom$
   };
