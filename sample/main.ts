@@ -5,7 +5,7 @@ import { combineArray, Stream, periodic, just } from 'most';
 import { makeSandboxDriver } from '../src/main';
 import { mainDOMConnector } from '../src/dom';
 import { makeHTTPDriver } from '@cycle/http';
-import { isolate } from '@cycle/isolate';
+import isolate from '@cycle/isolate';
 
 import { Component as SubComponent } from './widget';
 function Component ({Sandbox, ...sources}: Sources & {Sandbox: any} ): Sinks {
