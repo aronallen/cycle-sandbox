@@ -97,7 +97,7 @@ export function setup (
           }
         })
     },
-    error: (e) => console.error(e),
-    complete: () => null
+    error (error) {console.error(error)},
+    complete () {}
     })
 }
