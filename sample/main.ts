@@ -9,7 +9,7 @@ import isolate from '@cycle/isolate';
 
 import { Component as SubComponent } from './widget';
 function Component ({Sandbox, ...sources}: Sources & {Sandbox: any} ): Sinks {
-  const sub = isolate(SubComponent)(sources);
+  const sub = SubComponent(sources);
   const vdom$ = periodic(1000)
     .startWith(null)
     .map(() => combineArray(
