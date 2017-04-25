@@ -1,3 +1,4 @@
+declare const self: Worker;
 import fromEvent from 'xstream/extra/fromevent';
 import xs from 'xstream';
 import { Stream, Subscription} from 'xstream';
@@ -51,8 +52,8 @@ export function setup (
         cmd: SandboxMessageCommand.init,
         ports: transferPorts,
         instanceId
-      }
-      postMessage(initMessage, Object.values(transferPorts));
+      };
+      self.postMessage(initMessage, Object.values(transferPorts));
 
       const start$ = fromEvent(self, 'message')
         .map((event: MessageEvent) => event.data as SandboxMessage)
