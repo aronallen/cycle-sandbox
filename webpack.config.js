@@ -1,19 +1,19 @@
 var webpack = require('webpack');
 var path = require('path');
 
-var SRC_DIR = path.join(__dirname, 'src');
+var SRC_DIR = path.join(__dirname);
 
 module.exports = {
   devtool: 'eval',
   entry: {
-    main: './src/main.ts',
-    widget:  './src/widget.ts'
+    main: './sample/main.ts',
+    widget:  './sample/widget.ts'
   },
   module: {
     loaders: [{
       test: /\.tsx?$/,
       loader: 'awesome-typescript-loader',
-      include: SRC_DIR
+      include: [SRC_DIR]
     }]
   },
   output: {

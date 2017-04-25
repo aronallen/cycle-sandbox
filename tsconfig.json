@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "es6",
     "target": "es5",
-    "lib": ["es2017.object", "es6", "dom", "webworker"],
+    "lib": ["es2017.object", "es6", "webworker"],
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
