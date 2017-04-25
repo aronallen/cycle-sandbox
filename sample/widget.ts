@@ -15,12 +15,11 @@ function line(offset, frequency) {
     .map((n, i) => [i, Math.sin((i + offset) * radians) * SIZE / 2 + SIZE / 2].join(',')).join(' ')
 }
 
-function Component(sources: Sources): Sinks {
+export function Component(sources: Sources): Sinks {
   const multiply$ = sources.DOM
     .select('svg')
     .events('mousedown')
     .map(() => 0).scan((acc, n) => acc * 1.1, 1)
-    .tap(e => console.log(e));
 
   const title$ = sources
     .HTTP
