@@ -179,7 +179,7 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
             .take(1)
             .subscribe({
               next: listener,
-              error: (e) => console.error(e),
+              error (error) {console.error(error)},
               complete: () => null
             })
         },

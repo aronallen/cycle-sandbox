@@ -29,8 +29,8 @@ export const workerDOMConnector: WorkerConnector = (rx, tx) => {
         }
         tx.postMessage(message);
       },
-      error () {
-
+      error (error) {
+        console.error(error);
       },
       complete () {
         rx.close();
@@ -64,7 +64,7 @@ export const workerDOMConnector: WorkerConnector = (rx, tx) => {
                     observer.next(payload);
                   },
                   error (error) {
-                    console.error(error);
+                    console.error(error)
                   },
                   complete () {
 

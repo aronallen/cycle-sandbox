@@ -105,11 +105,11 @@ export const mainDOMConnector: MainConnector = (rx, tx) => {
                         synthesizeEvent(event, payload.listenerId)
                       )
                     },
-                    error(e) {
-
+                    error(error) {
+                      console.error(error);
                     },
                     complete() {
-                      console.log('complete');
+                      
                     }
                   })
               } else if (message.cmd === WorkerDOMMessageCommand.detach) {
@@ -118,8 +118,8 @@ export const mainDOMConnector: MainConnector = (rx, tx) => {
                 delete attachments[payload.listenerId];
               }
             },
-            error() {
-
+            error(error) {
+              console.error(error);
             },
             complete() {
 
