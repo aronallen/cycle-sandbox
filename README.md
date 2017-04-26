@@ -18,7 +18,7 @@ To solve this problem we need to establish connections between the DOM source in
 
 For most cases running your Cycle Components in a Web Worker will provide no performance benifits, the purpose of this project is more to proove that we can declare complex UI in a seperate thread, and we can do so without significant performance drawbacks.
 
-## Establishing Connections with Connectors
+### Establishing Connections with Connectors
 
 We call these connections, simply connections, and to establish them we need to write two Connectors.
 A Connector for main, and a Connector for the Web Worker.
