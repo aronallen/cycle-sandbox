@@ -49,3 +49,12 @@ Finaly you must specify which sinks you expect from the Component, this is necec
 #### A Note on Performance
 
 For most cases running your Cycle Components in a Web Worker will provide no performance benifits, the purpose of this project is more to proove that we can declare complex UI in a seperate thread, and we can do so without significant performance drawbacks.
+
+
+##### Contributers: 
+- [@MariusKazlauskas](https://github.com/MariusKazlauskas)
+- [@/michalvankodev](https://github.com/michalvankodev)
+
+##### License
+
+MIT
