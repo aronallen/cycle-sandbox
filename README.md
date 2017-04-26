@@ -25,7 +25,7 @@ You can see the type signatures of Connectors in ```/src/types.ts```.
 
 ### Bundled Connectors
 
-We aim to provide connectors for all @cylce/* drivers, as of now we provide a Connector for @cycle/dom. 
+We aim to provide connectors for all @cylce/* drivers that can't run in a Worker thread, as of now we provide a Connector for @cycle/dom. 
 
 We also provide a set of default connectors ```/src/default```. You can use these Connectors for any Driver that provides a Stream as source, and expects a Stream as sink. It is important that the value of the Stream is contained and can be safely transfered between threads, too keep things simple anything that can be serialized to JSON would pass these critirea. Because these connectors have a symetrical type-signature, we can use the same connector for the main, and worker thread.
 
