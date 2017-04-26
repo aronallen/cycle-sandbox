@@ -40,7 +40,7 @@ When invoking ```setup(main, drivers, connectors)```, make sure that drivers suc
 ### Mounting a Component from the Main Thread
 
 To mount a Component in a Web Worker, you must provide the Sandbox driver to your application.
-Sandbox.select is very similar to the setup function describe before, the bundle is a string identifying your resource, sources are the sources you desire to connect to your Web Worker. For every source you must provide a connector with the same key, e.g. ```let sources = { DOM : sources.DOM }``` then ```let connectors = { DOM : DOMMainConnector }```. 
+Sandbox.select is very similar to the setup function described above, the bundle is a string identifying your resource, sources are the sources you desire to connect to your Web Worker. For every source you must provide a connector with the same key, e.g. ```let sources = { DOM : sources.DOM }``` then ```let connectors = { DOM : DOMMainConnector }```. 
 
 Finaly you must specify which sinks you expect from the Component, this is nececary because sinks are bound synchrounosly in the Cycle Architecture, but are only known asynchronosly in Cycle Sandbox.
 
