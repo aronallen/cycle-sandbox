@@ -1,4 +1,4 @@
-# Cycle Sandbox
+# Cycle Sandbox 🏖️
 
 The purpose of this project is to enable you to run Cycle Components in Web Workers, and mount them side-by-side Cycle Components in the main thread.
 
