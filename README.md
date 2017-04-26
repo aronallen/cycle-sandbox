@@ -16,17 +16,15 @@ To solve this problem we need to establish connections between the DOM source in
 
 ## Establishing Connections with Connectors
 
-We call these connections, simply connections, and to establish them we need to write two connectors.
-A connector for main, and a connector for the Web Worker.
+We call these connections, simply connections, and to establish them we need to write two Connectors.
+A Connector for main, and a Connector for the Web Worker.
 
 A Connector in the main thread returns a Component mapping a source to a sink, and a Connector in the Web Worker returns a Driver mapping a sink to a source.
 
 You can see the type signatures of Connectors in ```/src/types.ts```.
 
-### Default Connectors
+### Bundled Connectors
 
-We provide a set of default Connectors. You can use these Connectors for any Driver that provides a Stream as source, and expects a Stream as sink.
+We aim to provide connectors for all @cylce/* drivers, as of now we provide a Connector for @cycle/dom. 
 
-It is important that the value of the Stream is contained and can be safely transfered between threads, too keep things simple anything that can be serialized to JSON would pass these critirea.
-
-Because these connectors have a symetrical type-signature, we can use the same connector for the main, and worker thread.
+We also provide a set of default connectors ```/src/default```. You can use these Connectors for any Driver that provides a Stream as source, and expects a Stream as sink. It is important that the value of the Stream is contained and can be safely transfered between threads, too keep things simple anything that can be serialized to JSON would pass these critirea. Because these connectors have a symetrical type-signature, we can use the same connector for the main, and worker thread.
