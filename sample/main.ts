@@ -3,7 +3,7 @@ import { run } from '@cycle/most-run';
 import { makeDOMDriver, h, VNode } from '@cycle/dom';
 import { combineArray, Stream, periodic, just } from 'most';
 import { makeSandboxDriver } from '../src/main';
-import { mainDOMConnector } from '../src/dom';
+import { DOMMainConnector } from '../src/dom';
 import { makeHTTPDriver } from '@cycle/http';
 import isolate from '@cycle/isolate';
 
@@ -19,7 +19,7 @@ function Component ({Sandbox, ...sources}: Sources & {Sandbox: any} ): Sinks {
         { DOM: sources.DOM },
         ['DOM'],
         {
-          DOM: mainDOMConnector
+          DOM: DOMMainConnector
         }
       ).DOM).concat(sub.DOM)))
     .switch()

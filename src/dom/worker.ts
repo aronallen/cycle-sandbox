@@ -16,7 +16,7 @@ import {
   WorkerDOMEvent
 } from './main';
 
-export const workerDOMConnector: WorkerConnector = (rx, tx) => {
+export const DOMWorkerConnector: WorkerConnector = (rx, tx) => {
   rx.start();
   tx.start();
   return (sink$: Stream<VNode>): any => {

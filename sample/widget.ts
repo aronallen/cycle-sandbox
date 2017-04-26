@@ -1,6 +1,6 @@
 import { periodic, just, combineArray, Stream } from 'most';
 import { setup } from '../src/worker';
-import { workerDOMConnector } from '../src/dom/index';
+import { DOMWorkerConnector } from '../src/dom/index';
 import { Sources, Sinks } from '@cycle/run';
 import { run } from '@cycle/most-run';
 import { makeHTTPDriver } from '@cycle/http';
@@ -71,5 +71,5 @@ export function Component(sources: Sources): Sinks {
 setup(Component, {
   HTTP: makeHTTPDriver()
 }, {
-  DOM: workerDOMConnector
+  DOM: DOMWorkerConnector
 }, run);

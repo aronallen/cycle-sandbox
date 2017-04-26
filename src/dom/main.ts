@@ -69,7 +69,7 @@ function synthesizeEvent(event: Event, listenerId: string): WorkerDOMEvent {
   }
 }
 
-export const mainDOMConnector: MainConnector = (rx, tx) => {
+export const DOMMainConnector: MainConnector = (rx, tx) => {
   let listener: FantasySubscription;
   // table containing DOM listener attachments
   const attachments: { [key: string]: FantasySubscription } = {

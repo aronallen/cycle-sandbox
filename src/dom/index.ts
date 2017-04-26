@@ -1,2 +1,2 @@
-export { mainDOMConnector } from './main';
-export { workerDOMConnector } from './worker';
+export { DOMMainConnector } from './main';
+export { DOMWorkerConnector } from './worker';
