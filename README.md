@@ -6,7 +6,7 @@ This is enabled by the Cycle Architetcure, because all side-effects happen in Dr
 
 Cycle Sandbox provides a way to use Drivers in a Web Worker thread that otherwise wouldn't.
 
-If you are unfamiliar with the Cycle Architecture, and what Drivers and Components are, you can learn from the official Cycle.js documentation [here](https://cycle.js.org);
+If you are unfamiliar with the Cycle Architecture, and what Drivers and Components are, you can learn from the official Cycle.js documentation [here](https://cycle.js.org).
 
 As an example @cycle/http works in a Web Worker thread witout any modification.
 
@@ -48,4 +48,6 @@ Sandbox.select is very similar to the setup function describe before, the bundle
 
 Finaly you must specify which sinks you expect from the Component, this is nececary because sinks are bound synchrounosly in the Cycle Architecture, but are only known asynchronosly in Cycle Sandbox.
 
-```Sandbox.select(bundle, sources, connectors, expectedSinks)```
+```sources.Sandbox.select(bundle, sources, connectors, expectedSinks)```
+
+This will return a stream of sinks once the component is mounted and running.
