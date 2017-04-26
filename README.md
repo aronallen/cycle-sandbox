@@ -4,7 +4,7 @@ The purpose of this project is to enable you to run Cycle Components in Web Work
 
 This is enabled by the Cycle Architetcure, because all side-effects happen in Drivers.
 
-Cycle Sandbox provides a way to use Drivers in a Web Worker thread that otherwise wouldn't.
+Cycle Sandbox provides a way to use Drivers in a Web Worker thread that otherwise wouldn't work.
 
 If you are unfamiliar with the Cycle Architecture, and what Drivers and Components are, you can learn from the official Cycle.js documentation [here](https://cycle.js.org).
 
