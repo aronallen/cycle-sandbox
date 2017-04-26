@@ -6,25 +6,27 @@ import {
 } from '@cycle/run/lib/adapt';
 
 export const defaultMainConnector: MainConnector = (rx, tx) => {
-  return (source$: Stream<any>) => {
+  return (stream$: Stream<any>) => {
     let receiver: Subscription;
     let sender: Subscription;
     return adapt(xs.create({
       start(observer) {
         rx.start();
         tx.start();
-        sender = source$.subscribe({
-          next(event) {
-            tx.postMessage(event);
-          },
-          error(error) {
-            console.error(error);
-          },
-          complete() {
+        if (stream$) {
+            sender = stream$.subscribe({
+            next(event) {
+              tx.postMessage(event);
+            },
+            error(error) {
+              console.error(error);
+            },
+            complete() {
 
-          }
-        })
-        receiver = fromEvent(rx, 'message')
+            }
+          });
+        } {
+          receiver = fromEvent(rx, 'message')
           .subscribe({
             next(event: MessageEvent) {
               observer.next(event.data);
@@ -35,11 +37,16 @@ export const defaultMainConnector: MainConnector = (rx, tx) => {
             complete() {
 
             }
-          })
+          });
+        }
       },
       stop() {
-        sender.unsubscribe();
-        receiver.unsubscribe();
+        if (sender) {
+          sender.unsubscribe();
+        }
+        if (receiver) {
+          receiver.unsubscribe();
+        }
         rx.close();
         tx.close();
       }
