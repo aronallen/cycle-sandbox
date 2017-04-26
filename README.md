@@ -46,8 +46,6 @@ Finaly you must specify which sinks you expect from the Component, this is necec
 
 ```sources.Sandbox.select(bundle, sources, connectors, expectedSinks)```
 
-This will return a stream of sinks once the component is mounted and running.
-
 #### A Note on Performance
 
 For most cases running your Cycle Components in a Web Worker will provide no performance benifits, the purpose of this project is more to proove that we can declare complex UI in a seperate thread, and we can do so without significant performance drawbacks.
