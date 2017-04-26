@@ -14,10 +14,6 @@ On the other hand @cycle/dom will not work, because the side-effects in @cycle/d
 
 To solve this problem we need to establish connections between the DOM source in the main thread, and the DOM source in the Web Worker, likewise we must establish a connection between the DOM sink in the Web Worker, to the DOM sink in the main thread.
 
-## A Note on Performance
-
-For most cases running your Cycle Components in a Web Worker will provide no performance benifits, the purpose of this project is more to proove that we can declare complex UI in a seperate thread, and we can do so without significant performance drawbacks.
-
 ### Establishing Connections with Connectors
 
 We call these connections, simply connections, and to establish them we need to write two Connectors.
@@ -51,3 +47,7 @@ Finaly you must specify which sinks you expect from the Component, this is necec
 ```sources.Sandbox.select(bundle, sources, connectors, expectedSinks)```
 
 This will return a stream of sinks once the component is mounted and running.
+
+#### A Note on Performance
+
+For most cases running your Cycle Components in a Web Worker will provide no performance benifits, the purpose of this project is more to proove that we can declare complex UI in a seperate thread, and we can do so without significant performance drawbacks.
