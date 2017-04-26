@@ -10,10 +10,9 @@ export const defaultMainConnector: MainConnector = (rx, tx) => {
     let receiver: Subscription;
     let sender: Subscription;
     return adapt(xs.create({
-      start(observer) {
-        rx.start();
-        tx.start();
+      start(observer) {  
         if (stream$) {
+            tx.start();
             sender = stream$.subscribe({
             next(event) {
               tx.postMessage(event);
@@ -26,6 +25,7 @@ export const defaultMainConnector: MainConnector = (rx, tx) => {
             }
           });
         } {
+          rx.start();
           receiver = fromEvent(rx, 'message')
           .subscribe({
             next(event: MessageEvent) {
