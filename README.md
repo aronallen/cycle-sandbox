@@ -19,8 +19,14 @@ To solve this problem we need to establish connections between the DOM source in
 We call these connections, simply connections, and to establish them we need to write two connectors.
 A connector for main, and a connector for the Web Worker.
 
-Connectors return either Components or Drivers. A Connector in the main thread returns a Component, and a Connector in the Web Worker returns a Driver.
+A Connector in the main thread returns a Component mapping a source to a sink, and a Connector in the Web Worker returns a Driver mapping a sink to a source.
 
 You can see the type signatures of Connectors in ```/src/types.ts```.
 
-We also provide a set of default connectors, these are for connecting drivers that simply have a Stream as source. It is important that the value of the Stream is contained and can be safely transfered between threads, too keep things simple anything that can be serialized to JSON would pass these critirea.
+### Default Connectors
+
+We provide a set of default Connectors. You can use these Connectors for any Driver that provides a Stream as source, and expects a Stream as sink.
+
+It is important that the value of the Stream is contained and can be safely transfered between threads, too keep things simple anything that can be serialized to JSON would pass these critirea.
+
+Because these connectors have a symetrical type-signature, we can use the same connector for the main, and worker thread.
