@@ -1,6 +1,6 @@
 {
   "name": "@cycle/sandbox",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Sandbox UI Components in Web Workers with the Cycle Architecture",
   "license": "MIT",
   "scripts": {
