@@ -68,17 +68,21 @@ export function portMap(channels: MessageChannels, portNumber: 1 | 2): MessagePo
 export function makeSandboxDriver(): Driver<undefined, Sources> {
 
 
+  let raf: boolean;
   
   const raf$ = xs.create({
     start(listener) {
+      raf = true;
       const r = () => requestAnimationFrame((e) => {
         listener.next(e);
-        r();
+        if (raf) {
+          raf;
+        }
       });
       r();
     },
     stop() {
-
+      raf = false;
     }
   });
 
