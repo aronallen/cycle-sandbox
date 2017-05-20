@@ -10,7 +10,8 @@ import {
 import {
   DOMSource,
   VNode,
-  h
+  h,
+  EventsFnOptions
 } from '@cycle/dom';
 
 import { default as xs, Stream, Subscription } from 'xstream';
@@ -27,20 +28,18 @@ export enum WorkerDOMMessageCommand {
   detach
 };
 
+export type WorkerEventFnOptions = { preventDefault?: boolean } & EventsFnOptions;
+
 export type WorkerDOMEvent = {
   listenerId: string,
   payload: EventSynthesis
-}
-
-export type WorkerDOMListenerOptions = {
-  preventDefault?: boolean
 }
 
 export type WorkerDOMAttachMessage = {
   selector: string,
   events: string,
   listenerId: string,
-  options?: WorkerDOMListenerOptions
+  options?: WorkerEventFnOptions
 }
 
 export type WorkerDOMDettachMessage = {

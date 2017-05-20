@@ -12,9 +12,9 @@ import {
 import {
   WorkerDOMMessage,
   WorkerDOMMessageCommand,
-  WorkerDOMListenerOptions,
   EventSynthesis,
-  WorkerDOMEvent
+  WorkerDOMEvent,
+  WorkerEventFnOptions
 } from './main';
 
 export const DOMWorkerConnector: WorkerConnector = (rx, tx) => {
@@ -42,7 +42,7 @@ export const DOMWorkerConnector: WorkerConnector = (rx, tx) => {
     function select (selector: string) {
       return {
         select: (suffix: string) => select(`${selector} ${suffix} `),
-        events: (events: string, options?: WorkerDOMListenerOptions): Stream<EventSynthesis> => {
+        events: (events: string, options?: WorkerEventFnOptions): Stream<EventSynthesis> => {
           const listenerId = uuid();
           let subscription: Subscription;
           return adapt(xs.create({
