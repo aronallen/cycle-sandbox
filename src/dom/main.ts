@@ -59,7 +59,7 @@ export type JSONObject = {
 
 export type EventSynthesis = JSONObject;
 
-function eventKeys(event: Event): string[] {
+function eventKeys(event: Event | Touch): string[] {
   const keys = [];
   for (const key in event) {
     keys.push(key);
@@ -67,9 +67,8 @@ function eventKeys(event: Event): string[] {
   return keys;
 }
 
-function synthesizeEvent(event: Event, listenerId: string): WorkerDOMEvent {
-  
-  const payload = eventKeys(event).reduce((acc, key) => {
+function synthesizer(event: Event | Touch): EventSynthesis {
+  return eventKeys(event).reduce((acc, key) => {
     const value = event[key];
     const type = typeof value;
     if (
@@ -91,10 +90,21 @@ function synthesizeEvent(event: Event, listenerId: string): WorkerDOMEvent {
         ...acc,
         [key] : tag + id + classes
       };
-    } {
+    } else if (value instanceof TouchList) {
+      return {
+        ...acc,
+        [key] : Array.prototype.slice.call(value).map(synthesizer)
+      }
+    } else {
+      
       return acc;
     }
   }, {});
+}
+
+function synthesizeEvent(event: Event, listenerId: string): WorkerDOMEvent {
+  
+  const payload = synthesizer(event);
   return {
     payload,
     listenerId
