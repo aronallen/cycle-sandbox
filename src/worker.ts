@@ -2,7 +2,7 @@ declare const self: Worker;
 import fromEvent from 'xstream/extra/fromevent';
 import xs from 'xstream';
 import { Stream, Subscription} from 'xstream';
-import * as uuid from 'uuid/v4';
+import { default as uuid} from 'uuid/v4';
 
 import {
   Drivers,

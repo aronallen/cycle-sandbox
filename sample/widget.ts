@@ -1,4 +1,4 @@
-import { periodic, just, combineArray, Stream } from 'most';
+import { periodic, just, combineArray, Stream, merge } from 'most';
 import { setup } from '../src/worker';
 import { DOMWorkerConnector } from '../src/dom/index';
 import { Sources, Sinks } from '@cycle/run';
@@ -16,9 +16,17 @@ function line(offset, frequency) {
 }
 
 export function Component(sources: Sources): Sinks {
-  const multiply$ = sources.DOM
-    .select('svg')
-    .events('mousedown')
+  const multiply$ = merge(
+    sources.DOM
+      .select('svg')
+      .events('mousedown', { preventDefault : true }),
+    sources.DOM
+      .select('svg')
+      .events('touchstart', { preventDefault : true })
+    
+  )
+    
+    .tap(e => console.log(e))
     .map(() => 0).scan((acc, n) => acc * 1.1, 1)
 
   const title$ = sources
