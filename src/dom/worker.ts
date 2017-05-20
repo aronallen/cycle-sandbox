@@ -86,11 +86,22 @@ export const DOMWorkerConnector: WorkerConnector = (rx, tx) => {
         }
       }
     }
+    const escape = {
+      'document' : 1,
+      ':root' : 1,
+      'body' : 1
+    };
     return {
       select,
       isolateSource (source: any, scope: string) {
 				return {
-					select: (sel) => select(`[x-scope="${scope}"] ${sel} `)
+					select: (sel) => {
+            if (escape[sel]) {
+              return select(sel);
+            } else {
+              return select(`[x-scope="${scope}"] ${sel} `)
+            }
+          }
 				}
 			},
 			// optimistic isoloate
