@@ -3,6 +3,7 @@ import { default as xs, Stream, Subscription} from 'xstream';
 import { VNode, h } from '@cycle/dom';
 import * as uuid from 'uuid/v4';
 import fromEvent from 'xstream/extra/fromevent';
+import sampleCombine from 'xstream/extra/samplecombine';
 
 import {
   adapt
@@ -16,13 +17,17 @@ import {
   WorkerDOMEvent
 } from './main';
 
+import { 
+  SandboxMessageCommand
+} from '../main'
+
 export const DOMWorkerConnector: WorkerConnector = (rx, tx) => {
   rx.start();
   tx.start();
   return (sink$: Stream<VNode>): any => {
-    
-    sink$.subscribe({
-      next (vnode) {
+    const raf$ = fromEvent(self, 'message').filter(e => e.data.cmd === SandboxMessageCommand.raf);
+    raf$.compose(sampleCombine(sink$)).subscribe({
+      next ([_, vnode]) {
         const message: WorkerDOMMessage = {
           cmd: WorkerDOMMessageCommand.vnode,
           payload: vnode

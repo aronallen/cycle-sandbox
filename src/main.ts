@@ -14,7 +14,7 @@ import {
 
 import isolate from '@cycle/isolate';
 
-import { Stream } from 'xstream';
+import { Stream,  } from 'xstream';
 import xs from 'xstream';
 import fromEvent from 'xstream/extra/fromevent';
 import { MainConnectors } from './types';
@@ -24,7 +24,8 @@ import * as uuid from 'uuid/v4';
 export enum SandboxMessageCommand {
   init,
   start,
-  stop
+  stop,
+  raf
 }
 
 type MessagePorts = {
@@ -65,6 +66,23 @@ export function portMap(channels: MessageChannels, portNumber: 1 | 2): MessagePo
 }
 
 export function makeSandboxDriver(): Driver<undefined, Sources> {
+
+
+  
+  const raf$ = xs.create({
+    start(listener) {
+      const r = () => requestAnimationFrame((e) => {
+        listener.next(e);
+        r();
+      });
+      r();
+    },
+    stop() {
+
+    }
+  });
+
+
   const workers: { [key: string]: Worker } = {
 
   }
@@ -76,18 +94,39 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
   const timeoutID: { [key: string]: number } = {
 
   }
+  const rafSubscriptions: {[key: string]: FantasySubscription} = {
+
+  };
 
   function open(resource: string): Worker {
     // clear the timeout
     clearTimeout(timeoutID[resource]);
     // fetch worker from cache or spawn it
-    let worker = workers[resource] || new Worker(resource);
+    let worker = workers[resource] || (() => {
+      rafSubscriptions[resource] = // send RAF signal to webworker
+              raf$.map((): SandboxMessage => ({
+                cmd: SandboxMessageCommand.raf,
+                instanceId : ''
+              })).subscribe({
+                next(raf) {
+                  worker.postMessage(raf);
+                },
+                error() {
+
+                },
+                complete() {
+
+                }
+              })
+      return new Worker(resource);
+    })();
     // get the current count
     let count = instances[resource] || 0;
     // assing the worker to the cache
     workers[resource] = worker;
     // increment the instances count
     instances[resource] = count + 1;
+    
     // return the worker reference
     return worker;
   }
@@ -105,6 +144,7 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
         worker.terminate();
         delete workers[resource];
       }, 0);
+      rafSubscriptions[resource].unsubscribe();
     } else {
       // do nothing
     }
@@ -122,6 +162,7 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
       let subscription: FantasySubscription;
       let worker: Worker;
       let receivePorts: MessagePorts = {};
+      let rafSubscription: FantasySubscription;
       const instanceId = uuid();
       return adapt(xs.create({
         start(observer) {
@@ -130,6 +171,9 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
           // { DOM: channel}
 
           worker = open(resource);
+
+
+
 
           // make a object of destination ports (rx in thread) wiil be transfered to thread
           const transferPorts = portMap(channels, 2);
@@ -179,8 +223,8 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
             .take(1)
             .subscribe({
               next: listener,
-              error (error) {console.error(error)},
-              complete () {}
+              error(error) { console.error(error) },
+              complete() { }
             })
         },
         stop() {
@@ -216,7 +260,7 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
     }
 
     return {
-      select 
+      select
     };
   }
 };
