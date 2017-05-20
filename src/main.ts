@@ -76,7 +76,7 @@ export function makeSandboxDriver(): Driver<undefined, Sources> {
       const r = () => requestAnimationFrame((e) => {
         listener.next(e);
         if (raf) {
-          raf;
+          r();
         }
       });
       r();
