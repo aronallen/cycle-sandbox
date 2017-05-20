@@ -4,6 +4,7 @@ import { VNode, h } from '@cycle/dom';
 import * as uuid from 'uuid/v4';
 import fromEvent from 'xstream/extra/fromevent';
 import sampleCombine from 'xstream/extra/samplecombine';
+import dropRepeats  from 'xstream/extra/droprepeats';
 
 import {
   adapt
@@ -26,8 +27,11 @@ export const DOMWorkerConnector: WorkerConnector = (rx, tx) => {
   tx.start();
   return (sink$: Stream<VNode>): any => {
     const raf$ = fromEvent(self, 'message').filter(e => e.data.cmd === SandboxMessageCommand.raf);
-    raf$.compose(sampleCombine(sink$)).subscribe({
-      next ([_, vnode]) {
+    raf$.compose(sampleCombine(sink$))
+    .map(([_, vnode]) => vnode)
+    .compose(dropRepeats())
+    .subscribe({
+      next (vnode) {
         const message: WorkerDOMMessage = {
           cmd: WorkerDOMMessageCommand.vnode,
           payload: vnode
