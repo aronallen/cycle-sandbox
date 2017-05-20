@@ -27,19 +27,13 @@ export enum WorkerDOMMessageCommand {
   detach
 };
 
-export type EventSynthesis = {
-  type: string;
-}
-
 export type WorkerDOMEvent = {
   listenerId: string,
   payload: EventSynthesis
 }
 
 export type WorkerDOMListenerOptions = {
-  preventDefault?: boolean,
-  stopPropegation?: boolean,
-  useCapture?: boolean
+  preventDefault?: boolean
 }
 
 export type WorkerDOMAttachMessage = {
@@ -59,14 +53,53 @@ export type WorkerDOMMessage = {
   cmd: WorkerDOMMessageCommand,
   payload: WorkerDOMAttachMessage | WorkerDOMDettachMessage | WorkerDOMVNodeMessage
 };
+export type JSONValue = number | string | boolean | JSONObject;
+export type JSONObject = {
+  [key: string] : JSONValue | Array<JSONValue>
+};
+
+export type EventSynthesis = JSONObject;
+
+function eventKeys(event: Event): string[] {
+  const keys = [];
+  for (const key in event) {
+    keys.push(key);
+  }
+  return keys;
+}
 
 function synthesizeEvent(event: Event, listenerId: string): WorkerDOMEvent {
-  return {
-    listenerId,
-    payload: {
-      type: event.type
+  
+  const payload = eventKeys(event).reduce((acc, key) => {
+    const value = event[key];
+    const type = typeof value;
+    if (
+      type === 'string' ||
+      type === 'number' ||
+      type === 'boolean'
+      ) {
+      return {
+        ...acc,
+        [key]: value
+      };
+    } else if (value instanceof Element) {
+      const tag = value.tagName;
+      const id = value.id ? `#${value.id}` : '';
+      const classes = value.classList.length 
+        ? Array(...value.classList).map(c => `.${c}`).join('')
+        : '';
+      return {
+        ...acc,
+        [key] : tag + id + classes
+      };
+    } {
+      return acc;
     }
-  }
+  }, {});
+  return {
+    payload,
+    listenerId
+  };
 }
 
 export const DOMMainConnector: MainConnector = (rx, tx) => {
@@ -92,14 +125,11 @@ export const DOMMainConnector: MainConnector = (rx, tx) => {
                 const options = payload.options || {};
                 attachments[payload.listenerId] = (xs.from(source
                   .select(payload.selector)
-                  .events(payload.events, options.useCapture)) as FantasyObservable)
+                  .events(payload.events, options)) as FantasyObservable)
                   .subscribe({
                     next(event: Event) {
                       if (options.preventDefault) {
                         event.preventDefault();
-                      }
-                      if (options.stopPropegation) {
-                        event.stopPropagation();
                       }
                       tx.postMessage(
                         synthesizeEvent(event, payload.listenerId)

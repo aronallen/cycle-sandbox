@@ -18,7 +18,8 @@ function line(offset, frequency) {
 export function Component(sources: Sources): Sinks {
   const multiply$ = sources.DOM
     .select('svg')
-    .events('mousedown')
+    .events('mousedown', {preventDefault : true})
+    .tap(e => console.log(e))
     .map(() => 0).scan((acc, n) => acc * 1.1, 1)
 
   const title$ = sources
