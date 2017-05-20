@@ -90,7 +90,7 @@ function synthesizer(event: Event | Touch): EventSynthesis {
         ...acc,
         [key] : tag + id + classes
       };
-    } else if (value instanceof TouchList) {
+    } else if (TouchList && value instanceof TouchList) {
       return {
         ...acc,
         [key] : Array.prototype.slice.call(value).map(synthesizer)
