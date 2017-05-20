@@ -1,7 +1,8 @@
 import { WorkerConnector } from '../types';
 import { default as xs, Stream, Subscription} from 'xstream';
 import { VNode, h } from '@cycle/dom';
-import * as uuid from 'uuid/v4';
+import { default as uuid} from 'uuid/v4';
+
 import fromEvent from 'xstream/extra/fromevent';
 
 import {

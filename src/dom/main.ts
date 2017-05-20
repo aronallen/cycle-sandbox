@@ -19,7 +19,7 @@ import fromEvent from 'xstream/extra/fromevent';
 
 import { MainConnector } from '../types';
 
-import * as uuid from 'uuid/v4';
+import { default as uuid} from 'uuid/v4';
 
 export enum WorkerDOMMessageCommand {
   vnode,

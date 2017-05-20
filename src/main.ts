@@ -19,7 +19,7 @@ import xs from 'xstream';
 import fromEvent from 'xstream/extra/fromevent';
 import { MainConnectors } from './types';
 
-import * as uuid from 'uuid/v4';
+import { default as uuid} from 'uuid/v4';
 
 export enum SandboxMessageCommand {
   init,

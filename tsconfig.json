@@ -2,7 +2,12 @@
   "compilerOptions": {
     "module": "es6",
     "target": "es6",
-    "lib": ["es2017.object", "es6", "dom", "dom.iterable"],
+    "lib": [
+      "es2017.object",
+      "es6",
+      "dom",
+      "dom.iterable"
+    ],
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
