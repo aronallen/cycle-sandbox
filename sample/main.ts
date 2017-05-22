@@ -10,8 +10,8 @@ import isolate from '@cycle/isolate';
 import { Component as SubComponent } from './widget';
 function Component ({Sandbox, ...sources}: Sources & {Sandbox: any} ): Sinks {
   const sub = SubComponent(sources);
-  const vdom$ = periodic(1000)
-    .startWith(null)
+  const vdom$ = 
+    just(null)
     .map(() => combineArray(
       (...children) => h('div', {}, children as Array<VNode>),
       Array(4).fill(null).map(() => Sandbox.select(
