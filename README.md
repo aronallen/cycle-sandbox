@@ -53,7 +53,7 @@ For most cases running your Cycle Components in a Web Worker will provide no per
 
 ##### Contributors:
 - [@MariusKazlauskas](https://github.com/MariusKazlauskas)
-- [@/michalvankodev](https://github.com/michalvankodev)
+- [@michalvankodev](https://github.com/michalvankodev)
 
 ##### License
 
