@@ -1,7 +1,8 @@
 import { WorkerConnector } from '../types';
 import { default as xs, Stream, Subscription} from 'xstream';
 import { VNode, h } from '@cycle/dom';
-import * as uuid from 'uuid/v4';
+import { default as uuid} from 'uuid/v4';
+
 import fromEvent from 'xstream/extra/fromevent';
 import sampleCombine from 'xstream/extra/samplecombine';
 import dropRepeats  from 'xstream/extra/droprepeats';
@@ -13,9 +14,9 @@ import {
 import {
   WorkerDOMMessage,
   WorkerDOMMessageCommand,
-  WorkerDOMListenerOptions,
   EventSynthesis,
-  WorkerDOMEvent
+  WorkerDOMEvent,
+  WorkerEventFnOptions
 } from './main';
 
 import { 
@@ -50,7 +51,7 @@ export const DOMWorkerConnector: WorkerConnector = (rx, tx) => {
     function select (selector: string) {
       return {
         select: (suffix: string) => select(`${selector} ${suffix} `),
-        events: (events: string, options?: WorkerDOMListenerOptions): Stream<EventSynthesis> => {
+        events: (events: string, options?: WorkerEventFnOptions): Stream<EventSynthesis> => {
           const listenerId = uuid();
           let subscription: Subscription;
           return adapt(xs.create({
@@ -94,11 +95,22 @@ export const DOMWorkerConnector: WorkerConnector = (rx, tx) => {
         }
       }
     }
+    const escape = {
+      'document' : 1,
+      ':root' : 1,
+      'body' : 1
+    };
     return {
       select,
       isolateSource (source: any, scope: string) {
 				return {
-					select: (sel) => select(`[x-scope="${scope}"] ${sel} `)
+					select: (sel) => {
+            if (escape[sel]) {
+              return select(sel);
+            } else {
+              return select(`[x-scope="${scope}"] ${sel} `)
+            }
+          }
 				}
 			},
 			// optimistic isoloate

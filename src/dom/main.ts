@@ -10,7 +10,8 @@ import {
 import {
   DOMSource,
   VNode,
-  h
+  h,
+  EventsFnOptions
 } from '@cycle/dom';
 
 import { default as xs, Stream, Subscription } from 'xstream';
@@ -19,7 +20,7 @@ import fromEvent from 'xstream/extra/fromevent';
 
 import { MainConnector } from '../types';
 
-import * as uuid from 'uuid/v4';
+import { default as uuid} from 'uuid/v4';
 
 export enum WorkerDOMMessageCommand {
   vnode,
@@ -27,26 +28,18 @@ export enum WorkerDOMMessageCommand {
   detach
 };
 
-export type EventSynthesis = {
-  type: string;
-}
+export type WorkerEventFnOptions = { preventDefault?: boolean } & EventsFnOptions;
 
 export type WorkerDOMEvent = {
   listenerId: string,
   payload: EventSynthesis
 }
 
-export type WorkerDOMListenerOptions = {
-  preventDefault?: boolean,
-  stopPropegation?: boolean,
-  useCapture?: boolean
-}
-
 export type WorkerDOMAttachMessage = {
   selector: string,
   events: string,
   listenerId: string,
-  options?: WorkerDOMListenerOptions
+  options?: WorkerEventFnOptions
 }
 
 export type WorkerDOMDettachMessage = {
@@ -59,14 +52,63 @@ export type WorkerDOMMessage = {
   cmd: WorkerDOMMessageCommand,
   payload: WorkerDOMAttachMessage | WorkerDOMDettachMessage | WorkerDOMVNodeMessage
 };
+export type JSONValue = number | string | boolean | JSONObject;
+export type JSONObject = {
+  [key: string] : JSONValue | Array<JSONValue>
+};
+
+export type EventSynthesis = JSONObject;
+
+function eventKeys(event: Event | Touch): string[] {
+  const keys = [];
+  for (const key in event) {
+    keys.push(key);
+  }
+  return keys;
+}
+
+function synthesizer(event: Event | Touch): EventSynthesis {
+  return eventKeys(event).reduce((acc, key) => {
+    const value = event[key];
+    const type = typeof value;
+    if (
+      type === 'string' ||
+      type === 'number' ||
+      type === 'boolean'
+      ) {
+      return {
+        ...acc,
+        [key]: value
+      };
+    } else if (value instanceof Element) {
+      const tag = value.tagName;
+      const id = value.id ? `#${value.id}` : '';
+      const classes = value.classList.length 
+        ? Array(...value.classList).map(c => `.${c}`).join('')
+        : '';
+      return {
+        ...acc,
+        [key] : tag + id + classes
+      };
+    } else if (window['TouchList'] && value instanceof window['TouchList']) {
+      return {
+        ...acc,
+        [key] : Array.prototype.slice.call(value).map(synthesizer)
+      }
+    } else {
+      
+      return acc;
+    }
+  }, {});
+}
 
 function synthesizeEvent(event: Event, listenerId: string): WorkerDOMEvent {
+  
+  const payload = synthesizer(event);
   return {
-    listenerId,
-    payload: {
-      type: event.type
-    }
-  }
+    payload,
+    listenerId
+  };
 }
 
 export const DOMMainConnector: MainConnector = (rx, tx) => {
@@ -92,14 +134,11 @@ export const DOMMainConnector: MainConnector = (rx, tx) => {
                 const options = payload.options || {};
                 attachments[payload.listenerId] = (xs.from(source
                   .select(payload.selector)
-                  .events(payload.events, options.useCapture)) as FantasyObservable)
+                  .events(payload.events, options)) as FantasyObservable)
                   .subscribe({
                     next(event: Event) {
                       if (options.preventDefault) {
                         event.preventDefault();
-                      }
-                      if (options.stopPropegation) {
-                        event.stopPropagation();
                       }
                       tx.postMessage(
                         synthesizeEvent(event, payload.listenerId)
