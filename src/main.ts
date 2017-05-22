@@ -14,7 +14,7 @@ import {
 
 import isolate from '@cycle/isolate';
 
-import { Stream,  } from 'xstream';
+import { Stream } from 'xstream';
 import xs from 'xstream';
 import fromEvent from 'xstream/extra/fromevent';
 import { MainConnectors } from './types';
